@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Handball Stats App</title>
+  
+  <!-- Google Fonts: Editorial Brutalism -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Custom Tailwind Config + Design System -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['DM Sans', 'sans-serif'],
+            body: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            sport: '#FF6B35',
+            brutalist: '#2B2D42',
+            neutral: '#F5F5F5',
+          },
+          spacing: {
+            gutter: '1.5rem',
+          },
+        },
+      },
+    }
+  </script>
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f5f5f5;
+      color: #1a1a1a;
+      line-height: 1.6;
+    }
+
+    /* Display Font for Headlines */
+    h1, h2, h3, .nav-tab {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    /* Navigation Tab Styling — Editorial Brutalism */
+    .nav-tab {
+      position: relative;
+      padding: 0.75rem 0;
+      margin: 0 1.5rem;
+      cursor: pointer;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #666;
+      border: none;
+      background: transparent;
+      transition: color 200ms ease;
+    }
+
+    .nav-tab::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 3px;
+      background: #FF6B35;
+      transition: width 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .nav-tab:hover {
+      color: #1a1a1a;
+    }
+
+    .nav-tab.active {
+      color: #1a1a1a;
+    }
+
+    .nav-tab.active::after {
+      width: 100%;
+    }
+
+    /* Tab Content Visibility */
+    .tab-content {
+      display: none;
+      animation: fadeInSlide 200ms ease;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeInSlide {
+      from {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Card Styling — Brutalist Grid */
+    .card {
+      background: white;
+      border: 1px solid #ddd;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .card-header {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #1a1a1a;
+    }
+
+    /* Nav Bar — Strict Linear */
+    .navbar {
+      background: white;
+      border-bottom: 2px solid #1a1a1a;
+      padding: 1rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .navbar-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .navbar-logo {
+      font-size: 1.4rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #FF6B35;
+      min-width: fit-content;
+    }
+
+    .nav-tabs-container {
+      display: flex;
+      gap: 0.5rem;
+      overflow-x: auto;
+      flex-wrap: wrap;
+    }
+
+    /* Main Content */
+    .main-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* Footer */
+    footer {
+      background: #1a1a1a;
+      color: white;
+      text-align: center;
+      padding: 2rem;
+      margin-top: 4rem;
+      border-top: 3px solid #FF6B35;
+      font-size: 0.9rem;
+      letter-spacing: 0.05em;
+    }
+
+    footer a {
+      color: #FF6B35;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .navbar-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+
+      .nav-tabs-container {
+        width: 100%;
+      }
+
+      .nav-tab {
+        font-size: 0.85rem;
+        margin: 0 0.75rem;
+        padding: 0.5rem 0;
+      }
+
+      .main-content {
+        padding: 1.5rem 1rem;
+      }
+
+      .card {
+        padding: 1rem;
+      }
+    }
+
+    /* Placeholder Content Styling */
+    .placeholder-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .stat-box {
+      background: white;
+      border: 1px solid #ddd;
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #FF6B35;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #666;
+      margin-top: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="navbar-container">
+      <div class="navbar-logo">HB STATS</div>
+      <div class="nav-tabs-container">
+        <button class="nav-tab active" data-tab="championships-tab">Campeonatos</button>
+        <button class="nav-tab" data-tab="teams-tab">Equipas</button>
+        <button class="nav-tab" data-tab="athletes-tab">Atletas</button>
+        <button class="nav-tab" data-tab="games-tab">Jogos</button>
+        <button class="nav-tab" data-tab="video-analysis-tab">Análise de Vídeo</button>
+        <button class="nav-tab" data-tab="data-management-tab">Gestão de Dados</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Campeonatos Tab -->
+    <div id="championships-tab" class="tab-content active">
+      <div class="card">
+        <h2 class="card-header">Campeonatos</h2>
+        <p>Gerencie todos os campeonatos registados na plataforma. Veja estatísticas, resultados e classificações.</p>
+      </div>
+      <div class="placeholder-grid">
+        <div class="stat-box">
+          <div class="stat-number">12</div>
+          <div class="stat-label">Campeonatos Activos</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number">156</div>
+          <div class="stat-label">Equipas Inscritas</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number">487</div>
+          <div class="stat-label">Jogos Realizados</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Equipas Tab -->
+    <div id="teams-tab" class="tab-content">
+      <div class="card">
+        <h2 class="card-header">Equipas</h2>
+        <p>Consulte dados das equipas, nóminas, histórico de desempenho e estatísticas gerais.</p>
+      </div>
+      <div class="placeholder-grid">
+        <div class="stat-box">
+          <div class="stat-number">156</div>
+          <div class="stat-label">Total de Equipas</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number">2.847</div>
+          <div class="stat-label">Atletas Registados</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number">94%</div>
+          <div class="stat-label">Taxa de Actividade</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Atletas Tab -->
+    <div id="athletes-tab" class="tab-content">
+      <div class="card">
+        <h2 class="card-header">Atletas</h2>
+        <p>Pesquise perfis de atletas, visualize estatísticas individuais, histórico de lesões e prémios.</p>
+      </div>
+      <div class="placeholder-grid">
+        <div class="stat-box">
+          <div class="stat-number">2.847</div>
+          <div class="stat-label">Atletas Activos</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number">18.932</div>
+          <div class="stat-label">Golos Marcados (Total)</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number">7.654</div>
+          <div class="stat-label">Assistências (Total)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Jogos Tab -->
+    <div id="games-tab" class="tab-content">
+      <div class="card">
+        <h2 class="card-header">Jogos</h2>
+        <p>Consulte calendários, resultados de jogos, estatísticas de jogo e highlights.</p>
+      </div>
+      <div class="placeholder-grid">
+        <div class="stat-box">
+          <div class="stat-number">487</div>
+          <div class="stat-label">Jogos Realizados</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number">23</div>
+          <div class="stat-label">Jogos Esta Semana</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number">41</div>
+          <div class="stat-label">Golos por Jogo (Média)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Análise de Vídeo Tab -->
+    <div id="video-analysis-tab" class="tab-content">
+      <div class="card">
+        <h2 class="card-header">Análise de Vídeo</h2>
+        <p>Aceda a vídeos de jogos, análises tácticas, replay de lances-chave e scouting.</p>
+      </div>
+      <div class="placeholder-grid">
+        <div class="stat-box">
+          <div class="stat-number">1.254</div>
+          <div class="stat-label">Vídeos Disponíveis</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number">856</div>
+          <div class="stat-label">Análises Realizadas</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number">3.124</div>
+          <div class="stat-label">Horas de Conteúdo</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gestão de Dados Tab -->
+    <div id="data-management-tab" class="tab-content">
+      <div class="card">
+        <h2 class="card-header">Gestão de Dados</h2>
+        <p>Exportar/importar dados, sincronização, integrações com sistemas externos e backup.</p>
+      </div>
+      <div class="placeholder-grid">
+        <div class="stat-box">
+          <div class="stat-number">847 MB</div>
+          <div class="stat-label">Dados Armazenados</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number">94%</div>
+          <div class="stat-label">Integridade de Dados</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number">8</div>
+          <div class="stat-label">Integrações Activas</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2026 Handball Stats App — Plataforma de Análise Profissional</p>
+    <p style="margin-top: 0.5rem; font-size: 0.85rem;">
+      <a href="#privacy">Privacidade</a> &nbsp;|&nbsp; 
+      <a href="#terms">Termos</a> &nbsp;|&nbsp; 
+      <a href="#support">Suporte</a>
+    </p>
+  </footer>
+
+  <!-- Tab Navigation Script -->
+  <script>
+    const navTabs = document.querySelectorAll('.nav-tab');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    navTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const tabId = tab.getAttribute('data-tab');
+
+        // Remove active class from all tabs and contents
+        navTabs.forEach(t => t.classList.remove('active'));
+        tabContents.forEach(content => content.classList.remove('active'));
+
+        // Add active class to clicked tab and corresponding content
+        tab.classList.add('active');
+        document.getElementById(tabId).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
