@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // 4. Inicializar módulos de features
     initChampionships();
+    initTeams();
 
     console.log('🎯 Aplicação pronta!');
 
@@ -84,7 +85,7 @@ function setupGlobalListeners() {
 
 /**
  * Função de teste (OPCIONAL)
- * Descomente em setupTabListeners() para testar
+ * Descomente para testar operações da BD
  */
 async function testDatabase() {
   try {
@@ -96,27 +97,56 @@ async function testDatabase() {
       season: 2026,
       startDate: '2026-01-15',
       endDate: '2026-06-30',
-      status: 'active',
+      status: 'activo',
+      description: 'Campeonato de andebol da 1ª divisão portuguesa',
     });
     console.log('✅ Novo campeonato ID:', champId);
     showAlert('Campeonato criado com sucesso!', 'success');
 
-    // 2. Adicionar equipa
-    const teamId = await addRecord('teams', {
-      name: 'SL Benfica',
-      city: 'Lisboa',
-      founded: 1904,
-      coach: 'João Silva',
-      championship_id: champId,
-    });
-    console.log('✅ Nova equipa ID:', teamId);
+    // 2. Adicionar equipas
+    const teamIds = [];
+    const teamsData = [
+      {
+        name: 'SL Benfica',
+        city: 'Lisboa',
+        founded: 1904,
+        coach: 'João Silva',
+        stadium: 'Pavilhão João Rocha',
+        championship_id: champId,
+        description: 'Clube histórico português',
+      },
+      {
+        name: 'FC Porto',
+        city: 'Porto',
+        founded: 1893,
+        coach: 'Carlos Mendes',
+        stadium: 'Pavilhão Multiusos de Sines',
+        championship_id: champId,
+        description: 'Tradicional clube do norte',
+      },
+      {
+        name: 'Sporting CP',
+        city: 'Lisboa',
+        founded: 1906,
+        coach: 'Pedro Costa',
+        stadium: 'Pavilhão Fidelidade',
+        championship_id: champId,
+        description: 'Clube lisboeta com grande história',
+      },
+    ];
+
+    for (const teamData of teamsData) {
+      const teamId = await addRecord('teams', teamData);
+      teamIds.push(teamId);
+      console.log('✅ Nova equipa ID:', teamId);
+    }
 
     // 3. Adicionar atleta
     const athleteId = await addRecord('athletes', {
       name: 'Paulo Santos',
       position: 'Pivot',
       number: 7,
-      team_id: teamId,
+      team_id: teamIds[0],
       height: 200,
       weight: 95,
       nationality: 'PT',
