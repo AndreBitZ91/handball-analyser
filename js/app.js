@@ -18,6 +18,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 3. Setup de listeners globais
     setupGlobalListeners();
 
+    // 4. Inicializar módulos de features
+    initChampionships();
+
     console.log('🎯 Aplicação pronta!');
 
     // Opcional: Descomente para testes
@@ -148,43 +151,4 @@ async function testDatabase() {
     console.error('❌ Erro nos testes:', error);
     showAlert(`Erro nos testes: ${error.message}`, 'error');
   }
-}
-
-/**
- * Exemplo de uso de modal (descomente para testar)
- */
-async function exampleModalUsage() {
-  const result = await createModal(
-    'Criar Novo Atleta',
-    `
-      <form>
-        <div class="form-group">
-          <label for="name">Nome</label>
-          <input type="text" id="name" name="name" required />
-        </div>
-        <div class="form-group">
-          <label for="position">Posição</label>
-          <select id="position" name="position" required>
-            <option value="">Seleccione...</option>
-            <option value="Guarda-redes">Guarda-redes</option>
-            <option value="Defesa">Defesa</option>
-            <option value="Pivot">Pivot</option>
-            <option value="Ala">Ala</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="number">Número</label>
-          <input type="number" id="number" name="number" min="1" max="99" required />
-        </div>
-      </form>
-    `,
-    async (formData) => {
-      console.log('Dados do formulário:', formData);
-      const athleteId = await addRecord('athletes', formData);
-      showAlert(`Atleta criado com ID: ${athleteId}`, 'success');
-      return athleteId;
-    }
-  );
-
-  console.log('Resultado do modal:', result);
 }
