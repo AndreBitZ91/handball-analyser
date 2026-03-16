@@ -416,6 +416,9 @@
     </p>
   </footer>
 
+  <!-- IndexedDB Database Script -->
+  <script src="js/db.js"></script>
+
   <!-- Tab Navigation Script -->
   <script>
     const navTabs = document.querySelectorAll('.nav-tab');
@@ -434,6 +437,87 @@
         document.getElementById(tabId).classList.add('active');
       });
     });
+
+    // Inicializar BD quando página carrega
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        await initDB();
+        console.log('🎯 Handball Stats App pronta!');
+        
+        // Opcional: Descomente a linha abaixo para testar as funções
+        // await testDatabase();
+      } catch (error) {
+        console.error('🔥 Erro crítico ao inicializar:', error);
+      }
+    });
+
+    /**
+     * Função de teste (OPCIONAL)
+     * Descomente a linha acima para testar
+     */
+    async function testDatabase() {
+      try {
+        console.log('\n🧪 Iniciando testes de BD...\n');
+
+        // 1. Adicionar campeonato
+        const champId = await addRecord('championships', {
+          name: 'Campeonato Nacional 2026',
+          season: 2026,
+          startDate: '2026-01-15',
+          endDate: '2026-06-30',
+          status: 'active',
+        });
+        console.log('Novo campeonato ID:', champId);
+
+        // 2. Adicionar equipa
+        const teamId = await addRecord('teams', {
+          name: 'SL Benfica',
+          city: 'Lisboa',
+          founded: 1904,
+          coach: 'João Silva',
+          championship_id: champId,
+        });
+        console.log('Nova equipa ID:', teamId);
+
+        // 3. Adicionar atleta
+        const athleteId = await addRecord('athletes', {
+          name: 'Paulo Santos',
+          position: 'Pivot',
+          number: 7,
+          team_id: teamId,
+          height: 200,
+          weight: 95,
+          nationality: 'PT',
+        });
+        console.log('Novo atleta ID:', athleteId);
+
+        // 4. Obter um registo
+        const athlete = await getRecord('athletes', athleteId);
+        console.log('Atleta recuperado:', athlete);
+
+        // 5. Actualizar registo
+        const updated = await updateRecord('athletes', athleteId, {
+          number: 8,
+          weight: 96,
+        });
+        console.log('Atleta actualizado:', updated);
+
+        // 6. Contar registos
+        const count = await countRecords('athletes');
+        console.log(`Total de atletas: ${count}`);
+
+        // 7. Obter todos de uma store
+        const allTeams = await getAllRecords('teams');
+        console.log('Todas as equipas:', allTeams);
+
+        // 8. Estatísticas gerais
+        await getDatabaseStats();
+
+        console.log('\n✅ Todos os testes completados com sucesso!\n');
+      } catch (error) {
+        console.error('❌ Erro nos testes:', error);
+      }
+    }
   </script>
 </body>
 </html>
