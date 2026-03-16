@@ -75,23 +75,17 @@
     <!-- Equipas Tab -->
     <div id="teams-tab" class="tab-content">
       <div class="card">
-        <h2 class="card-header">Equipas</h2>
-        <p>Consulte dados das equipas, nóminas, histórico de desempenho e estatísticas gerais.</p>
-      </div>
-      <div class="placeholder-grid">
-        <div class="stat-box">
-          <div class="stat-number">156</div>
-          <div class="stat-label">Total de Equipas</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-number">2.847</div>
-          <div class="stat-label">Atletas Registados</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-number">94%</div>
-          <div class="stat-label">Taxa de Actividade</div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <h2 class="card-header">Equipas</h2>
+            <p>Consulte dados das equipas, nóminas, histórico de desempenho e estatísticas gerais.</p>
+          </div>
+          <button id="btn-add-team" class="btn btn-primary" style="white-space: nowrap; margin-left: 1rem;">
+            + Nova Equipa
+          </button>
         </div>
       </div>
+      <div id="teams-content"></div>
     </div>
 
     <!-- Atletas Tab -->
@@ -205,6 +199,7 @@
   
   <!-- 4. Feature Modules -->
   <script src="js/championships.js"></script>
+  <script src="js/teams.js"></script>
   
   <!-- 5. App Main Controller -->
   <script src="js/app.js"></script>
